@@ -18,6 +18,9 @@ compile:
 bsp:
 	mill -i mill.bsp.BSP/install
 
+idea:
+	mill.idea.GenIdea/idea
+
 reformat:
 	mill -i __.reformat
 
