@@ -16,13 +16,14 @@ class SimulatorSpec extends AnyFunSpec with Matchers {
     it("runs GCD correctly") {
       val simulator = new VerilatorSimulator("test_run_dir/simulator/GCDSimulator")
       val result = simulator
-        .simulate(new GCD()) { (controller, gcd) =>
-          val a = controller.port(gcd.io.value1)
-          val b = controller.port(gcd.io.value2)
-          val loadValues = controller.port(gcd.io.loadingValues)
-          val result = controller.port(gcd.io.outputGCD)
-          val resultIsValid = controller.port(gcd.io.outputValid)
-          val clock = controller.port(gcd.clock)
+        .simulate(new GCD()) { module =>
+          val gcd = module.wrapped
+          val a = module.port(gcd.io.value1)
+          val b = module.port(gcd.io.value2)
+          val loadValues = module.port(gcd.io.loadingValues)
+          val result = module.port(gcd.io.outputGCD)
+          val resultIsValid = module.port(gcd.io.outputValid)
+          val clock = module.port(gcd.clock)
           a.set(24)
           b.set(36)
           loadValues.set(1)
@@ -49,8 +50,9 @@ class SimulatorSpec extends AnyFunSpec with Matchers {
     it("runs GCD correctly with peek/poke") {
       val simulator = new VerilatorSimulator("test_run_dir/simulator/GCDSimulator")
       val result = simulator
-        .simulate(new GCD()) { (_, gcd) =>
+        .simulate(new GCD()) { module =>
           import PeekPokeAPI._
+          val gcd = module.wrapped
           gcd.io.value1.poke(24.U)
           gcd.io.value2.poke(36.U)
           gcd.io.loadingValues.poke(1.B)
