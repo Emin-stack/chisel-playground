@@ -3,7 +3,9 @@
 build/
 .cache/
 .clangd/
-.cscope.out
+cscope.in.out
+cscope.out
+cscope.po.out
 .idea/
 .idea_modules/
 .metals/
