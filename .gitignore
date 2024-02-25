@@ -1,8 +1,15 @@
 # mill
-out/
 .bsp/
+build/
+.cache/
+.clangd/
+cscope.in.out
+cscope.out
+cscope.po.out
 .idea/
 .idea_modules/
+.metals/
+.nvim/
+out/
 test_run_dir/
-
-build/
+.vscode/
