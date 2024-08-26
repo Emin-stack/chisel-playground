@@ -3,9 +3,9 @@ package func
 import chisel3._
 
 class MulDivIO extends Bundle {
-  val in     = Vec(2, Input(UInt(64.W)))
-  val sign   = Input(Bool())
-  val isRem  = Input(Bool())
+  val in = Vec(2, Input(UInt(64.W)))
+  val sign = Input(Bool())
+  val isRem = Input(Bool())
   val result = Output(UInt(64.W))
 }
 
@@ -20,6 +20,6 @@ class MduOutput extends Bundle {
 }
 
 class MduIO extends Bundle {
-  val in  = new MduInput
+  val in = new MduInput
   val out = new MduOutput
 }

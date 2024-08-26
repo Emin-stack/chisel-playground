@@ -18,14 +18,14 @@ class Divider(len: Int = 64) extends Module with MduConsts {
     (s, Mux(s, -a, a))
   }
 
-  val isSigned        = io.sign
-  val (a, b)          = (io.in(0), io.in(1))
+  val isSigned = io.sign
+  val (a, b) = (io.in(0), io.in(1))
   val (aSigned, aAbs) = abs(a, isSigned)
   val (bSigned, bAbs) = abs(b, isSigned)
-  val unsignedResult  = aAbs / bAbs
-  val unsignedRemain  = aAbs % bAbs
-  val remianResult    = Mux(aSigned, -unsignedRemain, unsignedRemain)
-  val signedResult    = Mux(aSigned ^ bSigned, -unsignedResult, unsignedResult)
+  val unsignedResult = aAbs / bAbs
+  val unsignedRemain = aAbs % bAbs
+  val remianResult = Mux(aSigned, -unsignedRemain, unsignedRemain)
+  val signedResult = Mux(aSigned ^ bSigned, -unsignedResult, unsignedResult)
   io.result := Mux(io.isRem, remianResult, signedResult)
 }
 
@@ -49,9 +49,11 @@ class MDU(len: Int = 64) extends Module with MduConsts {
   multiplier.io.isRem := DontCare
   val mulResult = multiplier.io.result
   val resSelect = Cat(isDiv, isMul, (isMul === 0.U) && (isDiv === 0.U))
-  io.out.result := Mux1H(Seq(
-    resSelect(0) -> 0.U(len.W),
-    resSelect(1) -> mulResult,
-    resSelect(2) -> divResult
-  ))
+  io.out.result := Mux1H(
+    Seq(
+      resSelect(0) -> 0.U(len.W),
+      resSelect(1) -> mulResult,
+      resSelect(2) -> divResult
+    )
+  )
 }
