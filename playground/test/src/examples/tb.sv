@@ -21,8 +21,8 @@ module tb();
     #1  b = 1'b1;
   end
   initial begin//finish
-		$display("start: co:%d\n",co);
+    $display("start: co:%d\n",co);
     #110 $finish;
-		$display("end: co:%d\n",co);
+    $display("end: co:%d\n",co);
   end
 endmodule
