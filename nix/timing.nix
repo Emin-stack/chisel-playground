@@ -21,14 +21,16 @@
       verilator
       binutils
     ];
+    env = {
+      TRACE = 1;
+    };
 
     buildPhase = ''
-      ls -a
-         verilator --cc -trace --exe -Wall --timing -O1 -sv \
-         	examples/top.sv examples/tb.sv examples/main.cc \
-         	--top-module tb
+      verilator --cc -trace-fst --exe -Wall --timing -O1 -sv \
+        examples/top.sv examples/tb.sv examples/main.cc \
+        --top-module tb
 
-         cd obj_dir && make -f Vtb.mk
+      cd obj_dir && make -f Vtb.mk
     '';
 
     installPhase = ''
