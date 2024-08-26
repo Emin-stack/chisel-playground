@@ -6,10 +6,16 @@ import mill.scalalib.TestModule.Utest
 // support BSP
 import mill.bsp._
 
+object v {
+  val scala = "2.13.14"
+  val chisel = "7.0.0-M2"
+  val chiseltest = ivy"edu.berkeley.cs::chiseltest:6.0.0"
+}
+
 object playground extends ScalaModule with ScalafmtModule { m =>
   val useChisel6 = true
   val useUTest = false // utest support will be removed: https://github.com/ucb-bar/chiseltest/pull/688
-  override def scalaVersion = "2.13.12"
+  override def scalaVersion = v.scala
   override def scalacOptions = Seq(
     "-language:reflectiveCalls",
     "-deprecation",
@@ -17,25 +23,17 @@ object playground extends ScalaModule with ScalafmtModule { m =>
     "-Xcheckinit"
   )
   override def ivyDeps = Agg(
-    if (useChisel6) ivy"org.chipsalliance::chisel:6.0.0" else
-    ivy"edu.berkeley.cs::chisel3:3.6.0",
+    ivy"org.chipsalliance::chisel:${v.chisel}"
   )
   override def scalacPluginIvyDeps = Agg(
-    if (useChisel6) ivy"org.chipsalliance:::chisel-plugin:6.0.0" else
-    ivy"edu.berkeley.cs:::chisel3-plugin:3.6.0",
+    ivy"org.chipsalliance:::chisel-plugin:${v.chisel}"
   )
   object test extends ScalaTests {
     override def ivyDeps = m.ivyDeps() ++ Agg(
       ivy"com.lihaoyi::utest:0.8.1",
-      if (useChisel6) ivy"edu.berkeley.cs::chiseltest:5.0.2" else
-      ivy"edu.berkeley.cs::chiseltest:0.6.0",
+      v.chiseltest
     )
     def testFramework =
-      if (useUTest) "utest.runner.Framework" else
-      "org.scalatest.tools.Framework"
+      "utest.runner.Framework"
   }
-  override  def repositoriesTask = T.task { Seq(
-    coursier.MavenRepository("https://maven.aliyun.com/repository/central"),
-    coursier.MavenRepository("https://repo.scala-sbt.org/scalasbt/maven-releases"),
-  ) ++ super.repositoriesTask() }
 }
