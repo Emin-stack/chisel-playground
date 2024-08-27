@@ -1,31 +1,33 @@
 {
-  description = "Chisel Playground Flake";
+  description = "Chisel Nix Flake";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     flake-utils.url = "github:numtide/flake-utils";
-    nixpkgs-old.url = "github:NixOS/nixpkgs/336eda0d07dc5e2be1f923990ad9fdb6bc8e28e3";
   };
 
   outputs = {
     self,
     nixpkgs,
     flake-utils,
-    nixpkgs-old,
   } @ inputs: let
-    playground-overlay = import ./nix/overlay.nix {inherit self;};
+    chisel-overlay = import ./nix/overlay.nix {inherit self;};
   in
     flake-utils.lib.eachDefaultSystem
     (
       system: let
         pkgs = import nixpkgs {
           inherit system;
-          config.packageOverrides = pkgs: {
-            graalvm = nixpkgs-old.legacyPackages.${system}.graalvm-ce;
-          };
           overlays = [
-            playground-overlay
+            chisel-overlay
           ];
+        };
+        riscvPkgs = import nixpkgs {
+          localSystem = "${system}";
+          crossSystem = {
+            config = "riscv64-unknown-linux-gnu";
+            abi = "lp64";
+          };
         };
         deps = with pkgs; [
           git
@@ -36,7 +38,7 @@
 
           circt
           llvm
-          (mill.override {jre = pkgs.graalvm;})
+          (mill.override {jre = pkgs.jdk21;})
 
           gtkwave
         ];
@@ -44,14 +46,15 @@
         legacyPackages = pkgs;
         formatter = pkgs.alejandra;
         devShells.default = pkgs.mkShell.override {stdenv = pkgs.clangStdenv;} {
-          buildInputs = [deps];
+          buildInputs = [deps riscvPkgs.buildPackages.gcc] ++ pkgs.lib.optional pkgs.stdenv.isLinux riscvPkgs.buildPackages.gdb;
+          RV64_TOOLCHAIN_ROOT = "${riscvPkgs.buildPackages.gcc}";
           shellHook = ''
+            export PATH=$RV64_TOOLCHAIN_ROOT/bin:$PATH
           '';
         };
       }
     )
     // {
       inherit inputs;
-      templates = import ./nix/templates;
     };
 }
