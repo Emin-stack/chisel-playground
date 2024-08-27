@@ -4,6 +4,7 @@
   gnumake,
   verilator,
   binutils,
+  zlib,
 }: let
   self = stdenv.mkDerivation rec {
     name = "verilator-timing";
@@ -20,15 +21,13 @@
       gnumake
       verilator
       binutils
+      zlib
     ];
-    env = {
-      TRACE = 1;
-    };
 
     buildPhase = ''
       verilator --cc -trace-fst --exe -Wall --timing -O1 -sv \
         examples/top.sv examples/tb.sv examples/main.cc \
-        --top-module tb
+        --top-module tb --CFLAGS "-DTRACE=1"
 
       cd obj_dir && make -f Vtb.mk
     '';
