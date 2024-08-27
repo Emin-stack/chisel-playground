@@ -22,6 +22,7 @@ int main(int argc, char **argv) {
 
 #ifdef TRACE
   // Construct a VerilatedFstC
+  // Enable fst trace by using `--trace-fst`: https://veripool.org/guide/latest/exe_verilator.html?highlight=fst#cmdoption-trace-fst
   VerilatedFstC *tracep = new VerilatedFstC;
 
   // Trace the model
@@ -45,6 +46,7 @@ int main(int argc, char **argv) {
 #endif
     // Using delays and `--timing`, we should call additional two methods:
     // `eventsPending()` and `nextTimeSlot()`
+    // see: https://veripool.org/guide/latest/connecting.html#wrappers-and-model-evaluation-loop
 
     // `eventsPending()`: Check if there are any delayed events pending
     if (!duvp->eventsPending())
@@ -55,6 +57,7 @@ int main(int argc, char **argv) {
   }
 
   // Output messages when quitting the simulation before $finish
+  // About how to enbale VL_DEBUG_IF message: https://github.com/verilator/verilator/issues/2175
   if (!contextp->gotFinish()) {
     VL_DEBUG_IF(VL_PRINTF("+ Exiting without $finish; no events left\n"););
   }
