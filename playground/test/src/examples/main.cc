@@ -34,7 +34,7 @@ int main(int argc, char **argv) {
   tracep->open("waveform.fst");
 #endif
 
-  // Simualte utils $finish
+  // Simulate util $finish
   while (!contextp->gotFinish()) {
     // Evaluate model
     duvp->eval();
@@ -46,11 +46,11 @@ int main(int argc, char **argv) {
     // Using delays and `--timing`, we should call additional two methods:
     // `eventsPending()` and `nextTimeSlot()`
 
-    // Check if there are any delayed events pending
+    // `eventsPending()`: Check if there are any delayed events pending
     if (!duvp->eventsPending())
       break;
 
-    // returns the simulation time of the next delayed event.
+    // `nextTimeSlot()`: Returns the simulation time of the next delayed event.
     contextp->time(duvp->nextTimeSlot());
   }
 
