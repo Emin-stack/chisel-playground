@@ -30,3 +30,11 @@ To generate Verilog:
 make verilog
 ```
 
+## Use chisel template
+To use chisel nix template, run the following command:
+```bash
+mkdir chisel-playground
+cd chisel-playground
+git init
+nix flake init -t github:Emin017/chisel-playground#chisel
+```
