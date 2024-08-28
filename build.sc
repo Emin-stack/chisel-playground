@@ -1,8 +1,10 @@
 // import Mill dependency
 import mill._
-import mill.scalalib._
+import mill.define.Sources
+import mill.modules.Util
 import mill.scalalib.scalafmt.ScalafmtModule
-import mill.scalalib.TestModule.Utest
+import mill.scalalib.TestModule.ScalaTest
+import scalalib._
 // support BSP
 import mill.bsp._
 
@@ -12,9 +14,8 @@ object v {
   val chiseltest = ivy"edu.berkeley.cs::chiseltest:6.0.0"
 }
 
-object playground extends ScalaModule with ScalafmtModule { m =>
-  val useChisel6 = true
-  val useUTest = false // utest support will be removed: https://github.com/ucb-bar/chiseltest/pull/688
+object playground extends SbtModule with ScalafmtModule { m =>
+  override def millSourcePath = os.pwd
   override def scalaVersion = v.scala
   override def scalacOptions = Seq(
     "-language:reflectiveCalls",
@@ -28,12 +29,9 @@ object playground extends ScalaModule with ScalafmtModule { m =>
   override def scalacPluginIvyDeps = Agg(
     ivy"org.chipsalliance:::chisel-plugin:${v.chisel}"
   )
-  object test extends ScalaTests {
+  object test extends SbtModuleTests with TestModule.ScalaTest {
     override def ivyDeps = m.ivyDeps() ++ Agg(
-      ivy"com.lihaoyi::utest:0.8.1",
-      v.chiseltest
+      ivy"org.scalatest::scalatest::3.2.16"
     )
-    def testFramework =
-      "utest.runner.Framework"
   }
 }
